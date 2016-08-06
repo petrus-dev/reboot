@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+	<ListPreference
+		android:key="reboot_button"
+		android:title="@string/pref_reboot_button"
+		android:summary="@string/pref_reboot_button_summary"
+		android:defaultValue="show"
+		android:entries="@array/show_hide"
+		android:entryValues="@array/show_hide_values" />
+    <ListPreference
+		android:key="soft_reboot_button"
+		android:title="@string/pref_soft_reboot_button"
+		android:summary="@string/pref_soft_reboot_button_summary"
+		android:defaultValue="show"
+		android:entries="@array/show_hide"
+		android:entryValues="@array/show_hide_values" />
+	<ListPreference
+		android:key="reboot_recovery_button"
+		android:title="@string/pref_reboot_recovery_button"
+		android:summary="@string/pref_reboot_recovery_button_summary"
+		android:defaultValue="show"
+		android:entries="@array/show_hide"
+		android:entryValues="@array/show_hide_values" />
+	<ListPreference
+		android:key="reboot_bootloader_button"
+		android:title="@string/pref_reboot_bootloader_button"
+		android:summary="@string/pref_reboot_bootloader_button_summary"
+		android:defaultValue="auto"
+		android:entries="@array/show_hide_auto"
+		android:entryValues="@array/show_hide_auto_values" />
+	<ListPreference
+		android:key="reboot_download_button"
+		android:title="@string/pref_reboot_download_button"
+		android:summary="@string/pref_reboot_download_button_summary"
+		android:defaultValue="hide"
+		android:entries="@array/show_hide"
+		android:entryValues="@array/show_hide_values" />
+	<ListPreference
+		android:key="power_off_button"
+		android:title="@string/pref_power_off_button"
+		android:summary="@string/pref_power_off_button_summary"
+		android:defaultValue="show"
+		android:entries="@array/show_hide"
+		android:entryValues="@array/show_hide_values" />
+	<ListPreference
+		android:key="stop_wifi"
+		android:title="@string/pref_stop_wifi"
+		android:summary="@string/pref_summary_stop_wifi"
+		android:defaultValue="auto"
+		android:entries="@array/yes_no_auto"
+		android:entryValues="@array/yes_no_auto_values" />
+	<ListPreference
+		android:key="flash_misc"
+		android:title="@string/pref_flash_misc"
+		android:summary="@string/pref_summary_flash_misc"
+		android:defaultValue="auto"
+		android:entries="@array/yes_no_auto"
+		android:entryValues="@array/yes_no_auto_values" />
+    <CheckBoxPreference
+        android:key="check_old_app"
+        android:title="@string/pref_check_old_app"
+        android:summary="@string/pref_summary_check_old_app"
+        android:defaultValue="true" />
+	<CheckBoxPreference
+        android:key="remount_everything_ro"
+        android:title="@string/pref_remount_everything_ro"
+        android:summary="@string/pref_summary_remount_everything_ro"
+        android:defaultValue="false" />
+	<CheckBoxPreference
+        android:key="confirm_actions"
+        android:title="@string/pref_confirm_actions"
+        android:summary="@string/pref_summary_confirm_actions"
+        android:defaultValue="true" />
+</PreferenceScreen>

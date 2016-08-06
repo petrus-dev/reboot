@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <include layout="@layout/custom_title"/>
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/reboot"
+        android:textAllCaps="false"
+        android:id="@+id/reboot_button"/>
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/soft_reboot"
+        android:textAllCaps="false"
+        android:id="@+id/soft_reboot_button"/>
+    
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/reboot_recovery"
+        android:textAllCaps="false"
+        android:id="@+id/reboot_recovery_button"/>
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/reboot_bootloader"
+        android:textAllCaps="false"
+        android:id="@+id/reboot_bootloader_button"/>
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/reboot_download"
+        android:textAllCaps="false"
+        android:id="@+id/reboot_download_button"/>
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/power_off"
+        android:textAllCaps="false"
+        android:id="@+id/power_off_button"/>
+    
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/cancel"
+        android:textAllCaps="false"
+        android:id="@+id/cancel_button"/>
+    
+</LinearLayout>

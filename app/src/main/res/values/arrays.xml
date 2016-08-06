@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="show_hide"  translatable="false">
+		<item name="show">@string/show</item>
+		<item name="hide">@string/hide</item>
+	</string-array>
+    <string-array name="show_hide_auto" translatable="false">
+		<item name="show">@string/show</item>
+		<item name="hide">@string/hide</item>
+		<item name="auto">@string/autodetect</item>
+	</string-array>		
+	<string-array name="yes_no_auto" translatable="false">
+		<item name="yes">@string/yes</item>
+		<item name="no">@string/no</item>
+		<item name="auto">@string/autodetect</item>
+	</string-array>
+   	<!-- Note to translators : the following values must NOT be translated.
+		 They are never shown, and must remain untouched for the app to work correctly. -->
+    <string-array name="show_hide_values" translatable="false">
+		<item name="show">show</item>
+		<item name="hide">hide</item>
+	</string-array>
+    <string-array name="show_hide_auto_values" translatable="false">
+		<item name="show">show</item>
+		<item name="hide">hide</item>
+		<item name="auto">auto</item>
+	</string-array>
+    <string-array name="yes_no_auto_values" translatable="false">
+		<item name="yes">yes</item>
+		<item name="no">no</item>
+		<item name="auto">auto</item>
+	</string-array>
+</resources>
