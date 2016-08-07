@@ -40,7 +40,7 @@
     <uses-permission android:name="android.permission.ACCESS_SUPERUSER" />
 
     <application
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/ic_launcher_48dp"
         android:label="@string/title"
         android:allowBackup="true">
 
