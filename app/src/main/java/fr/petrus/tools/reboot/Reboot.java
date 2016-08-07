@@ -54,6 +54,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -137,8 +138,6 @@ public class Reboot extends Activity implements OnClickListener {
 		String product_name = SystemUtils.getProp("ro.product.name");
 		Log.v(TAG, "Detected product name : \"" + product_name + "\"");
 
-		String sdk_version = SystemUtils.getProp("ro.build.version.sdk");
-		int sdk_int_version = Integer.parseInt(sdk_version);
 		Log.v(TAG, "Detected arch : \"" + board + "\"");
 		if (board.startsWith("rk28")) {
 			Log.v(TAG, "arch = ROCKCHIP_28");
@@ -147,7 +146,7 @@ public class Reboot extends Activity implements OnClickListener {
 			Log.v(TAG, "arch = ROCKCHIP_29");
 			arch = Constants.ARCH_ROCKCHIP_29;
 		} else if (board.startsWith("rk30")) {
-			if (sdk_int_version>=19 &&
+			if (Build.VERSION.SDK_INT>=19 &&
 					( product_device.equalsIgnoreCase("rk3188") || 
 					  product_name.equalsIgnoreCase("rk3188") ) ) {
 				Log.v(TAG, "arch = ROCKCHIP_31_KK");
@@ -158,7 +157,7 @@ public class Reboot extends Activity implements OnClickListener {
 			}
 		} else if (board.equalsIgnoreCase("crane")
 				|| board.equalsIgnoreCase("nuclear")) {
-			if (sdk_version.equals("9") || sdk_version.equals("10")) {
+			if (Build.VERSION.SDK_INT==9 || Build.VERSION.SDK_INT==10) {
 				Log.v(TAG, "arch = ALLWINNER_GB");
 				arch = Constants.ARCH_ALLWINNER_GB;
 			} else {
