@@ -10,7 +10,7 @@
 
     <ImageView
         android:id="@+id/title_app_icon"
-        android:src="@drawable/ic_launcher"
+        android:src="@drawable/ic_launcher_36dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
@@ -18,7 +18,7 @@
 
     <TextView
         android:text="@string/title"
-        android:textSize="24sp"
+        android:textSize="24dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingLeft="8sp"
@@ -27,7 +27,7 @@
 
     <ImageView
         android:id="@+id/title_menu_icon"
-        android:src="@drawable/ic_menu_menu"
+        android:src="@drawable/ic_more_vert_white_24dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
