@@ -59,7 +59,7 @@ The sources are available here, so you can build it yourself if you like.
 
 1. Get the sources
 ```bash
-git clone https://github.com/petrus-dev/storagecrypt.git
+git clone https://github.com/petrus-dev/reboot.git
 ```
 2. Import the project in Android Studio
 3. Run it on your device from Android Studio, by running the "app" run task.
