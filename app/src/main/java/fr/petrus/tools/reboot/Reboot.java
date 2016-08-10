@@ -37,6 +37,7 @@
 package fr.petrus.tools.reboot;
 
 import eu.chainfire.libsuperuser.Shell;
+import fr.petrus.tools.reboot.utils.Device;
 import fr.petrus.tools.reboot.utils.FileSystemUtils;
 import fr.petrus.tools.reboot.utils.SystemUtils;
 
@@ -54,7 +55,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -68,16 +68,17 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 
-public class Reboot extends Activity implements OnClickListener {
+/**
+ * The main activity where most of the work is done.
+ *
+ * @author Pierre Sagne
+ */
+public class Reboot extends Activity {
     private static final String TAG = "Reboot";
 
     private static final boolean TITLE_IN_LAYOUT = true;
 
-    private int arch = Constants.ARCH_UNKNOWN;
-	private String product_name = "";
-	private boolean stop_wifi = false;
-	private boolean flash_misc = false;
-	private boolean remount_everything_ro = false;
+    private Device device = null;
 
 	private ImageView menuIcon = null;
 
@@ -90,7 +91,6 @@ public class Reboot extends Activity implements OnClickListener {
 	private Button cancelButton = null;
 
 	private SharedPreferences sharedPref = null;
-	private SharedPreferences.OnSharedPreferenceChangeListener prefListener = null;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -120,93 +120,79 @@ public class Reboot extends Activity implements OnClickListener {
 		powerOffButton = (Button) findViewById(R.id.power_off_button);
 		cancelButton = (Button) findViewById(R.id.cancel_button);
 
-		menuIcon.setOnClickListener(this);
+        setupButtonsListeners();
 
-		rebootButton.setOnClickListener(this);			
-		softRebootButton.setOnClickListener(this);			
-		rebootRecoveryButton.setOnClickListener(this);			
-		rebootBootloaderButton.setOnClickListener(this);
-		rebootDownloadButton.setOnClickListener(this);
-		powerOffButton.setOnClickListener(this);			
-		cancelButton.setOnClickListener(this);
+        device = new Device();
 
-		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 		sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-
-		String board = SystemUtils.getProp("ro.product.board");
-		String product_device = SystemUtils.getProp("ro.product.device");
-		String product_name = SystemUtils.getProp("ro.product.name");
-		Log.v(TAG, "Detected product name : \"" + product_name + "\"");
-
-		Log.v(TAG, "Detected arch : \"" + board + "\"");
-		if (board.startsWith("rk28")) {
-			Log.v(TAG, "arch = ROCKCHIP_28");
-			arch = Constants.ARCH_ROCKCHIP_28;
-		} else if (board.startsWith("rk29")) {
-			Log.v(TAG, "arch = ROCKCHIP_29");
-			arch = Constants.ARCH_ROCKCHIP_29;
-		} else if (board.startsWith("rk30")) {
-			if (Build.VERSION.SDK_INT>=19 &&
-					( product_device.equalsIgnoreCase("rk3188") || 
-					  product_name.equalsIgnoreCase("rk3188") ) ) {
-				Log.v(TAG, "arch = ROCKCHIP_31_KK");
-				arch = Constants.ARCH_ROCKCHIP_31_KK;
-			} else {
-				Log.v(TAG, "arch = ROCKCHIP_30");
-				arch = Constants.ARCH_ROCKCHIP_30;
-			}
-		} else if (board.equalsIgnoreCase("crane")
-				|| board.equalsIgnoreCase("nuclear")) {
-			if (Build.VERSION.SDK_INT==9 || Build.VERSION.SDK_INT==10) {
-				Log.v(TAG, "arch = ALLWINNER_GB");
-				arch = Constants.ARCH_ALLWINNER_GB;
-			} else {
-				Log.v(TAG, "arch = ALLWINNER");
-				arch = Constants.ARCH_ALLWINNER;
-			}
-		} else {
-			Log.v(TAG, "arch = UNKNOWN");
-			arch = Constants.ARCH_UNKNOWN;
-		}
 
 		updatePrefs();
 
-        // Use instance field for listener
-        // It will not be gc'd as long as this instance is kept referenced
-        prefListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-        	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-        		Reboot.this.updatePrefs();
-        	}
-        };
-
-		sharedPref.registerOnSharedPreferenceChangeListener(prefListener);
+		sharedPref.registerOnSharedPreferenceChangeListener(new SharedPreferences.OnSharedPreferenceChangeListener() {
+            public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+                updatePrefs();
+            }
+        });
 	}
 
-	public void updatePrefs() {
-		String reboot_vis = sharedPref.getString("reboot_button", "show");
-		if (reboot_vis.equals("show")) {
+    @Override
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, v, menuInfo);
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.menu, menu);
+	}
+
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case R.id.menu_settings:
+				Intent settingsIntent = new Intent(getBaseContext(), SettingsActivity.class);
+				startActivity(settingsIntent);
+				return true;
+			case R.id.menu_about:
+				Intent aboutIntent = new Intent(getBaseContext(), WebViewActivity.class);
+				aboutIntent.putExtra(WebViewActivity.FILE_RES_ID, R.raw.about);
+				startActivity(aboutIntent);
+				return true;
+			case R.id.menu_changelog:
+				Intent changelogIntent = new Intent(getBaseContext(), WebViewActivity.class);
+				changelogIntent.putExtra(WebViewActivity.FILE_RES_ID, R.raw.changelog);
+				startActivity(changelogIntent);
+				return true;
+			case R.id.menu_close:
+				Reboot.this.finish();
+				return true;
+			default:
+				return super.onContextItemSelected(item);
+		}
+	}
+
+	private void updatePrefs() {
+		String rebootButtonVisibility = sharedPref.getString("reboot_button", "show");
+		if (rebootButtonVisibility.equals("show")) {
 			rebootButton.setVisibility(View.VISIBLE);			
 		} else {
 			rebootButton.setVisibility(View.GONE);			
 		}
 		
-		String soft_reboot_vis = sharedPref.getString("soft_reboot_button", "show");
-		if (soft_reboot_vis.equals("show")) {
+		String softRebootButtonVisibility = sharedPref.getString("soft_reboot_button", "show");
+		if (softRebootButtonVisibility.equals("show")) {
 			softRebootButton.setVisibility(View.VISIBLE);			
 		} else {
 			softRebootButton.setVisibility(View.GONE);			
 		}
 
-		String reboot_recovery_vis = sharedPref.getString("reboot_recovery_button", "show");
-		if (reboot_recovery_vis.equals("show")) {
+		String rebootRecoveryButtonVisibility = sharedPref.getString("reboot_recovery_button", "show");
+		if (rebootRecoveryButtonVisibility.equals("show")) {
 			rebootRecoveryButton.setVisibility(View.VISIBLE);			
 		} else {
 			rebootRecoveryButton.setVisibility(View.GONE);			
 		}
 
-		String reboot_bootloader_vis = sharedPref.getString("reboot_bootloader_button", "auto");
-		if (reboot_bootloader_vis.equals("auto")) {
-			switch (arch) {
+		String rebootBootloaderButtonVisibility = sharedPref.getString("reboot_bootloader_button", "auto");
+		if (rebootBootloaderButtonVisibility.equals("auto")) {
+			switch (device.getArch()) {
 				case Constants.ARCH_ROCKCHIP_30:
 				case Constants.ARCH_ROCKCHIP_31_KK:
 				case Constants.ARCH_UNKNOWN:
@@ -215,118 +201,118 @@ public class Reboot extends Activity implements OnClickListener {
 				default:
 					rebootBootloaderButton.setVisibility(View.GONE);
 			}
-		} else if (reboot_bootloader_vis.equals("show")) {
+		} else if (rebootBootloaderButtonVisibility.equals("show")) {
 			rebootBootloaderButton.setVisibility(View.VISIBLE);			
 		} else {
 			rebootBootloaderButton.setVisibility(View.GONE);			
 		}
 
-		String reboot_download_vis = sharedPref.getString("reboot_download_button", "hide");
-		if (reboot_download_vis.equals("show")) {
+		String rebootDownloadButtonVisibility = sharedPref.getString("reboot_download_button", "hide");
+		if (rebootDownloadButtonVisibility.equals("show")) {
 			rebootDownloadButton.setVisibility(View.VISIBLE);
 		} else {
 			rebootDownloadButton.setVisibility(View.GONE);
 		}
 
-		String power_off_vis = sharedPref.getString("power_off_button", "show");
-		if (power_off_vis.equals("show")) {
+		String powerOffButtonVisibility = sharedPref.getString("power_off_button", "show");
+		if (powerOffButtonVisibility.equals("show")) {
 			powerOffButton.setVisibility(View.VISIBLE);			
 		} else {
 			powerOffButton.setVisibility(View.GONE);			
 		}
-		
-		String stop_wifi_pref = sharedPref.getString("stop_wifi", "auto");
-		if (stop_wifi_pref.equals("auto")) {
-			if (product_name.equals("iMito QX1")) {
-				stop_wifi = true;
-			} else {
-				stop_wifi = false;
-			}
-		} else if (stop_wifi_pref.equals("no")) {
-			stop_wifi = false;
-		} else {
-			stop_wifi = true;
-		}
-		
-		String flash_misc_pref = sharedPref.getString("flash_misc", "auto");
-		if (flash_misc_pref.equals("auto")) {
-			switch (arch) {
-				case Constants.ARCH_ROCKCHIP_28:
-				case Constants.ARCH_ROCKCHIP_29:
-				case Constants.ARCH_ROCKCHIP_30:
-				case Constants.ARCH_ALLWINNER:
-				case Constants.ARCH_ALLWINNER_GB:
-					flash_misc = true;
-					break;
-				case Constants.ARCH_ROCKCHIP_31_KK:
-					flash_misc = false;
-					break;
-				default:
-					flash_misc = false;
-					break;
-			}
-		} else if (flash_misc_pref.equals("no")) {
-			flash_misc = false;
-		} else {
-			flash_misc = true;
-		}
-		
-		remount_everything_ro = sharedPref.getBoolean("remount_everything_ro", false);
 
-        boolean check_old_app = sharedPref.getBoolean("check_old_app", true);
-        if (check_old_app && isOldApplicationInstalled()) {
+        if (sharedPref.getBoolean("check_old_app", true) && isOldApplicationInstalled()) {
             showDialog(Constants.DIALOG_REMOVE_OLD_APP_ID);
         }
     }
-	
-	//@SuppressWarnings("deprecation")
-	@Override
-	public void onClick(View v) {
-		boolean confirm_actions = sharedPref.getBoolean("confirm_actions", true);
-		if (v == rebootButton) {
-			if (confirm_actions) {
-				showDialog(Constants.DIALOG_REBOOT_ID);
-			} else {
-				reboot();
-			}
-		} else if (v == softRebootButton) {
-			if (confirm_actions) {
-				showDialog(Constants.DIALOG_SOFT_REBOOT_ID);
-			} else {
-				softReboot();
-			}
-		} else if (v == rebootRecoveryButton) {
-			if (confirm_actions) {
-				showDialog(Constants.DIALOG_REBOOT_RECOVERY_ID);
-			} else {
-				rebootRecovery();
-			}
-		} else if (v == rebootBootloaderButton) {
-			if (confirm_actions) {
-				showDialog(Constants.DIALOG_REBOOT_BOOTLOADER_ID);
-			} else {
-				rebootBootloader();
-			}
-		} else if (v == rebootDownloadButton) {
-			if (confirm_actions) {
-				showDialog(Constants.DIALOG_REBOOT_DOWNLOAD_ID);
-			} else {
-				rebootDownload();
-			}
-		} else if (v == powerOffButton) {
-			if (confirm_actions) {
-				showDialog(Constants.DIALOG_POWER_OFF_ID);
-			} else {
-				powerOff();
-			}
-		} else if (v == cancelButton) {
-			finish();
-		} else if (v == menuIcon) {
-			registerForContextMenu(v); 
-		    openContextMenu(v);
-		    unregisterForContextMenu(v);
-		}
-	}
+
+    private void setupButtonsListeners() {
+        menuIcon.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                registerForContextMenu(view);
+                openContextMenu(view);
+                unregisterForContextMenu(view);
+            }
+        });
+
+        rebootButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (confirmActions()) {
+                    showDialog(Constants.DIALOG_REBOOT_ID);
+                } else {
+                    reboot();
+                }
+            }
+        });
+
+        softRebootButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (confirmActions()) {
+                    showDialog(Constants.DIALOG_SOFT_REBOOT_ID);
+                } else {
+                    softReboot();
+                }
+            }
+        });
+
+        rebootRecoveryButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (confirmActions()) {
+                    showDialog(Constants.DIALOG_REBOOT_RECOVERY_ID);
+                } else {
+                    rebootRecovery();
+                }
+            }
+        });
+
+        rebootBootloaderButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (confirmActions()) {
+                    showDialog(Constants.DIALOG_REBOOT_BOOTLOADER_ID);
+                } else {
+                    rebootBootloader();
+                }
+            }
+        });
+
+        rebootDownloadButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (confirmActions()) {
+                    showDialog(Constants.DIALOG_REBOOT_DOWNLOAD_ID);
+                } else {
+                    rebootDownload();
+                }
+            }
+        });
+
+        powerOffButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (confirmActions()) {
+                    showDialog(Constants.DIALOG_POWER_OFF_ID);
+                } else {
+                    powerOff();
+                }
+            }
+        });
+
+        cancelButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+    }
+
+    private boolean confirmActions() {
+        return sharedPref.getBoolean("confirm_actions", true);
+    }
 
 	protected Dialog onCreateDialog(int id) {
 		Dialog dialog;
@@ -486,7 +472,7 @@ public class Reboot extends Activity implements OnClickListener {
         }
     }
 
-    public void removeOldApplication() {
+    private void removeOldApplication() {
         PackageManager packageManager = getPackageManager();
         try {
             ApplicationInfo applicationInfo =
@@ -516,36 +502,77 @@ public class Reboot extends Activity implements OnClickListener {
                 softReboot();
             }
         } catch (PackageManager.NameNotFoundException e) {
-            Log.e("Reboot", "Package \""+Constants.OLD_APPLICATION_PACKAGE_NAME+"\" not found", e);
+            Log.e(TAG, "Package \""+Constants.OLD_APPLICATION_PACKAGE_NAME+"\" not found", e);
         }
     }
 
     private void stopWifi() {
+        boolean stop_wifi;
+
+        String stop_wifi_pref = sharedPref.getString("stop_wifi", "auto");
+        if (stop_wifi_pref.equals("auto")) {
+            if (device.getProductName().equalsIgnoreCase("iMito QX1")) {
+                stop_wifi = true;
+            } else {
+                stop_wifi = false;
+            }
+        } else if (stop_wifi_pref.equals("no")) {
+            stop_wifi = false;
+        } else {
+            stop_wifi = true;
+        }
+
 		if (stop_wifi) {
             Shell.SU.run("svc wifi disable");
 		}
 	}
 	
 	private void remountEverythingRO() {
-		if (remount_everything_ro) {
+		if (sharedPref.getBoolean("remount_everything_ro", false)) {
             FileSystemUtils.remountEverythingRO();
 		}
 	}
 
-	public void reboot() {
+	private void reboot() {
 		stopWifi();
 		remountEverythingRO();
 		SystemUtils.reboot();
 	}
 
-	public void softReboot() {
+	private void softReboot() {
 		SystemUtils.softReboot();
 	}
 
-	public void rebootRecovery() {
+	private void rebootRecovery() {
 		stopWifi();
-		if (flash_misc) {
-			switch (arch) {
+
+        boolean flash_misc;
+
+        String flash_misc_pref = sharedPref.getString("flash_misc", "auto");
+        if (flash_misc_pref.equals("auto")) {
+            switch (device.getArch()) {
+                case Constants.ARCH_ROCKCHIP_28:
+                case Constants.ARCH_ROCKCHIP_29:
+                case Constants.ARCH_ROCKCHIP_30:
+                case Constants.ARCH_ALLWINNER:
+                case Constants.ARCH_ALLWINNER_GB:
+                    flash_misc = true;
+                    break;
+                case Constants.ARCH_ROCKCHIP_31_KK:
+                    flash_misc = false;
+                    break;
+                default:
+                    flash_misc = false;
+                    break;
+            }
+        } else if (flash_misc_pref.equals("no")) {
+            flash_misc = false;
+        } else {
+            flash_misc = true;
+        }
+
+        if (flash_misc) {
+			switch (device.getArch()) {
                 case Constants.ARCH_ROCKCHIP_28:
                 case Constants.ARCH_ROCKCHIP_29:
                 case Constants.ARCH_ROCKCHIP_30:
@@ -592,13 +619,13 @@ public class Reboot extends Activity implements OnClickListener {
 		}
 	}
 
-	public void rebootBootloader() {
+	private void rebootBootloader() {
 		stopWifi();
 		remountEverythingRO();
 		SystemUtils.rebootBootloader();
 	}
 
-	public void rebootDownload() {
+	private void rebootDownload() {
 		stopWifi();
 		remountEverythingRO();
 		try {
@@ -608,7 +635,7 @@ public class Reboot extends Activity implements OnClickListener {
 		}
 	}
 
-	public void powerOff() {
+	private void powerOff() {
 		stopWifi();
 		remountEverythingRO();
 		SystemUtils.powerOff();
@@ -630,36 +657,4 @@ public class Reboot extends Activity implements OnClickListener {
 		}
 		return recoveryImageFile;
 	}
-
-	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-		super.onCreateContextMenu(menu, v, menuInfo);
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.menu, menu);
-	}
-	
-	@Override  
-	public boolean onContextItemSelected(MenuItem item) {  
-		switch (item.getItemId()) {
-			case R.id.menu_settings:
-				Intent settingsIntent = new Intent(getBaseContext(), SettingsActivity.class);
-				startActivity(settingsIntent);
-				return true;
-			case R.id.menu_about:
-				Intent aboutIntent = new Intent(getBaseContext(), WebViewActivity.class);
-				aboutIntent.putExtra(WebViewActivity.FILE_RES_ID, R.raw.about);
-				startActivity(aboutIntent);
-				return true;
-			case R.id.menu_changelog:
-				Intent changelogIntent = new Intent(getBaseContext(), WebViewActivity.class);
-				changelogIntent.putExtra(WebViewActivity.FILE_RES_ID, R.raw.changelog);
-				startActivity(changelogIntent);
-				return true;
-			case R.id.menu_close:
-				Reboot.this.finish();
-				return true;
-			default:
-				return super.onContextItemSelected(item);
-		}
-	}  
 }
