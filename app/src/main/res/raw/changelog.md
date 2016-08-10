@@ -1,5 +1,8 @@
 # Reboot Changelog #
 
+* version 2.0.1
+  * Bug fix : incorrect detection of iMito QX1 device
+
 * version 2.0.0
   * Open source : [https://github.com/petrus-dev/reboot](https://github.com/petrus-dev/reboot)
   * Support for Android 7.0
