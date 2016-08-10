@@ -39,6 +39,11 @@ package fr.petrus.tools.reboot;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 
+/**
+ * The Activity which handles the preferences.
+ *
+ * @author Pierre Sagne
+ */
 public class SettingsActivity extends PreferenceActivity {
 	@Override
     public void onCreate(Bundle savedInstanceState) {

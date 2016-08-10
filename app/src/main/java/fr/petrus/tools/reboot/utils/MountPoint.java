@@ -38,6 +38,11 @@ package fr.petrus.tools.reboot.utils;
 
 import java.io.File;
 
+/**
+ * Describes a FileSystem mount point.
+ *
+ * @author Pierre Sagne
+ */
 public class MountPoint {
 	private String devName = null;
 	private String fsType = null;

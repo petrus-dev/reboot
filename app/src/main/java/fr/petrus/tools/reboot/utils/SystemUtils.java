@@ -43,6 +43,11 @@ import android.util.Log;
 
 import eu.chainfire.libsuperuser.Shell;
 
+/**
+ * Some System related utility methods.
+ *
+ * @author Pierre Sagne
+ */
 public class SystemUtils {
 	public static final String TAG = "SystemUtils";
 

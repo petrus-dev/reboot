@@ -37,7 +37,9 @@
 package fr.petrus.tools.reboot;
 
 /**
- * Created by pierre on 03/08/16.
+ * Keeps the app constants together.
+ *
+ * @author Pierre Sagne
  */
 public interface Constants {
     int ARCH_UNKNOWN        = 0;

@@ -48,6 +48,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 
+/**
+ * The Activity which displays the "about" and "changelog" screens.
+ *
+ * @author Pierre Sagne
+ */
 public class WebViewActivity extends Activity {
 	public static final String TAG = "WebViewActivity";
 

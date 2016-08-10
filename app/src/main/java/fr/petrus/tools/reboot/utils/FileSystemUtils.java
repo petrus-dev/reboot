@@ -45,15 +45,16 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
-import android.content.Context;
-import android.content.res.Resources;
 import android.os.Environment;
 import android.util.Log;
 
 import eu.chainfire.libsuperuser.Shell;
-import fr.petrus.tools.reboot.Constants;
-import fr.petrus.tools.reboot.R;
 
+/**
+ * Some FileSystem related utility methods.
+ *
+ * @author Pierre Sagne
+ */
 public class FileSystemUtils {
 	private static final String TAG = "FileSystemUtils";
 
