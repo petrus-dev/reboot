@@ -24,6 +24,10 @@ I am not responsible for any any issues this app may cause.
 
 Root access to your device is required to use this application. If you are not aware whether or not your device has root access, you probably don't have root access.
 
+This app runs on Android 1.6+. It is quite an old version, so the code uses some deprecated methods.
+One solution could be to use the Android support libraries, but I wanted to keep the app very light, so I only use Android APIs 1.6 for now.
+Don't be surprise when you look at the code if you see deprecated methods.
+
 ## Supported languages ##
 * English
 * French
