@@ -52,27 +52,30 @@ public class SystemUtils {
 	public static final String TAG = "SystemUtils";
 
 	public static String getProp(String key) {
-        List<String> resultLines = Shell.SU.run("getprop " + key);
-
         StringBuilder stringBuilder = new StringBuilder();
-        for (String line : resultLines) {
-            stringBuilder.append(line);
-        }
+
+        List<String> resultLines = Shell.SU.run("getprop " + key);
+		if (null!=resultLines) {
+			for (String line : resultLines) {
+				stringBuilder.append(line);
+			}
+		}
 		return stringBuilder.toString();
 	}
 
 	public static String getImageMtdDev(String name) {
 		List<String> resultLines = Shell.SH.run("cat /proc/mtd");
-
-		for (String line : resultLines) {
-			String[] fields = line.split(" ");
-			String mtdName = fields[fields.length - 1];
-			if (mtdName.equals("\"" + name + "\"")) {
-				String mtdDev = fields[0];
-				String dev = mtdDev.substring(0, mtdDev.length() - 1);
-				return dev;
-			}
-		}
+        if (null!=resultLines) {
+            for (String line : resultLines) {
+                String[] fields = line.split(" ");
+                String mtdName = fields[fields.length - 1];
+                if (mtdName.equals("\"" + name + "\"")) {
+                    String mtdDev = fields[0];
+                    String dev = mtdDev.substring(0, mtdDev.length() - 1);
+                    return dev;
+                }
+            }
+        }
 		return null;
 	}
 

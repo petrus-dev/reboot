@@ -104,8 +104,10 @@ public class FileSystemUtils {
         List<MountPoint> mountPoints = new LinkedList<>();
 
         List<String> resultLines = Shell.SU.run("mount");
-        for (String line : resultLines) {
-            mountPoints.add(new MountPoint(line));
+        if (null!=resultLines) {
+            for (String line : resultLines) {
+                mountPoints.add(new MountPoint(line));
+            }
         }
 
         return mountPoints;
