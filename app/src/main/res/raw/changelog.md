@@ -1,5 +1,8 @@
 # Reboot Changelog #
 
+* version 2.0.2
+  * Bug fix : Crash when detecting device properties on Xperia C3 Dual.
+
 * version 2.0.1
   * Bug fix : incorrect detection of iMito QX1 device
 
