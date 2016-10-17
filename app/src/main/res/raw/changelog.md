@@ -1,5 +1,8 @@
 # Reboot Changelog #
 
+* version 2.0.3
+  * Turkish version by agabey_42
+
 * version 2.0.2
   * Bug fix : Crash when detecting device properties on Xperia C3 Dual.
 

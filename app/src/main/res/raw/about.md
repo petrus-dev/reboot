@@ -2,7 +2,7 @@
 
 ## Version ##
 
-* 2.0.2
+* 2.0.3
 
 ## Author ##
 
@@ -22,4 +22,5 @@
 * "pr0xZen" for the Norwegian translation
 * "litry" for the Spanish translation
 * "ViperRunner" for the Portuguese translation
+* "agabey_42" for the Turkish translation
 * all the members for the testing and the kind support. I'm glad to be part of this community :)
