@@ -583,7 +583,9 @@ public class Reboot extends Activity {
                     String miscMtdDev = SystemUtils.getImageMtdDev("misc");
 
                     if (null != recoveryImageFile && null != miscMtdDev) {
-						SystemUtils.runAsRoot("busybox dd if=" + recoveryImageFile.getAbsolutePath() + " of=/dev/mtd/" + miscMtdDev);
+						SystemUtils.runAsRoot(SystemUtils.commandFromBox("dd")
+                                + " if=" + recoveryImageFile.getAbsolutePath()
+                                + " of=/dev/mtd/" + miscMtdDev);
                     }
 
                     remountEverythingRO();
@@ -594,11 +596,15 @@ public class Reboot extends Activity {
                     }
                     break;
                 case Constants.ARCH_ALLWINNER:
-					SystemUtils.runAsRoot("echo -n boot-recovery | busybox dd of=/dev/block/nandf count=1 conv=sync");
+					SystemUtils.runAsRoot("echo -n boot-recovery | "
+                            + SystemUtils.commandFromBox("dd")
+                            + " of=/dev/block/nandf count=1 conv=sync");
                     SystemUtils.reboot();
                     break;
                 case Constants.ARCH_ALLWINNER_GB:
-					SystemUtils.runAsRoot("echo -n boot-recovery | busybox dd of=/dev/block/nande count=1 conv=sync");
+					SystemUtils.runAsRoot("echo -n boot-recovery | "
+                            + SystemUtils.commandFromBox("dd")
+                            + " of=/dev/block/nande count=1 conv=sync");
                     remountEverythingRO();
                     SystemUtils.reboot();
                     break;
