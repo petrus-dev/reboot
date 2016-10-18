@@ -71,7 +71,19 @@ public class SystemUtils {
 		return Shell.SU.run(commands);
 	}
 
-	public static String getProp(String key) {
+    public static String commandFromBox(String command) {
+        if (null!=runAsRoot("busybox")) {
+            return "busybox " + command;
+        } else if (null!=runAsRoot("toybox")) {
+            return "toybox " + command;
+        } else if (null!=runAsRoot("toolbox")) {
+            return "toolbox " + command;
+        } else {
+            return command;
+        }
+    }
+
+    public static String getProp(String key) {
         StringBuilder stringBuilder = new StringBuilder();
 
         List<String> resultLines = runAsRoot("getprop " + key);
@@ -133,6 +145,6 @@ public class SystemUtils {
 	}
 
 	public static void softReboot() {
-        runAsRoot("busybox pkill zygote");
+        runAsRoot(commandFromBox("pkill") + " zygote");
 	}
 }
