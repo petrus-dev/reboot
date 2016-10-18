@@ -48,8 +48,6 @@ import java.util.List;
 import android.os.Environment;
 import android.util.Log;
 
-import eu.chainfire.libsuperuser.Shell;
-
 /**
  * Some FileSystem related utility methods.
  *
@@ -97,13 +95,13 @@ public class FileSystemUtils {
 
         commands.add("umount "+USB_DISK_PATH);
 
-		Shell.SU.run(commands);
+		SystemUtils.runAsRoot(commands);
 	}
 
     public static List<MountPoint> getMountPoints() {
         List<MountPoint> mountPoints = new LinkedList<>();
 
-        List<String> resultLines = Shell.SU.run("mount");
+        List<String> resultLines = SystemUtils.runAsRoot("mount");
         if (null!=resultLines) {
             for (String line : resultLines) {
                 mountPoints.add(new MountPoint(line));
@@ -134,6 +132,6 @@ public class FileSystemUtils {
             }
 		}
 
-        Shell.SU.run(commands);
+        SystemUtils.runAsRoot(commands);
 	}
 }

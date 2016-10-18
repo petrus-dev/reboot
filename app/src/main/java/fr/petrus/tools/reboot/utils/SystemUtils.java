@@ -51,10 +51,30 @@ import eu.chainfire.libsuperuser.Shell;
 public class SystemUtils {
 	public static final String TAG = "SystemUtils";
 
+	public static boolean isDeviceRooted() {
+		return Shell.SU.available();
+	}
+
+    public static List<String> run(String command) {
+        return Shell.SH.run(command);
+    }
+
+    public static List<String> run(List<String> commands) {
+        return Shell.SH.run(commands);
+    }
+
+	public static List<String> runAsRoot(String command) {
+		return Shell.SU.run(command);
+	}
+
+	public static List<String> runAsRoot(List<String> commands) {
+		return Shell.SU.run(commands);
+	}
+
 	public static String getProp(String key) {
         StringBuilder stringBuilder = new StringBuilder();
 
-        List<String> resultLines = Shell.SU.run("getprop " + key);
+        List<String> resultLines = runAsRoot("getprop " + key);
 		if (null!=resultLines) {
 			for (String line : resultLines) {
 				stringBuilder.append(line);
@@ -64,7 +84,7 @@ public class SystemUtils {
 	}
 
 	public static String getImageMtdDev(String name) {
-		List<String> resultLines = Shell.SH.run("cat /proc/mtd");
+		List<String> resultLines = run("cat /proc/mtd");
         if (null!=resultLines) {
             for (String line : resultLines) {
                 String[] fields = line.split(" ");
@@ -106,13 +126,13 @@ public class SystemUtils {
 	public static void reboot(String arg) throws IOException {
 		FileSystemUtils.unmountAllExternalDisks();
         if (null!=arg && arg.length()>0) {
-            Shell.SU.run("reboot "+arg);
+            runAsRoot("reboot "+arg);
         } else {
-            Shell.SU.run("reboot");
+            runAsRoot("reboot");
         }
 	}
 
 	public static void softReboot() {
-        Shell.SU.run("busybox pkill zygote");
+        runAsRoot("busybox pkill zygote");
 	}
 }

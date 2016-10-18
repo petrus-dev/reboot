@@ -36,7 +36,7 @@
 
 package fr.petrus.tools.reboot;
 
-import eu.chainfire.libsuperuser.Shell;
+//import eu.chainfire.libsuperuser.Shell;
 import fr.petrus.tools.reboot.utils.Device;
 import fr.petrus.tools.reboot.utils.FileSystemUtils;
 import fr.petrus.tools.reboot.utils.SystemUtils;
@@ -96,7 +96,7 @@ public class Reboot extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		if (!Shell.SU.available()) {
+		if (!SystemUtils.isDeviceRooted()) {
 			showDialog(Constants.DIALOG_NO_ROOT_ID);
 		}
 
@@ -498,7 +498,7 @@ public class Reboot extends Activity {
                 commands.add("rm /system/priv-app/"+Constants.OLD_APPLICATION_PACKAGE_NAME+".apk");
                 commands.add("rm /system/priv-app/"+Constants.OLD_APPLICATION_PACKAGE_NAME+"-*.apk");
                 commands.add("mount -o remount,ro /system");
-				Shell.SU.run(commands);
+				SystemUtils.runAsRoot(commands);
                 softReboot();
             }
         } catch (PackageManager.NameNotFoundException e) {
@@ -523,7 +523,7 @@ public class Reboot extends Activity {
         }
 
 		if (stop_wifi) {
-            Shell.SU.run("svc wifi disable");
+			SystemUtils.runAsRoot("svc wifi disable");
 		}
 	}
 	
@@ -581,7 +581,7 @@ public class Reboot extends Activity {
                     String miscMtdDev = SystemUtils.getImageMtdDev("misc");
 
                     if (null != recoveryImageFile && null != miscMtdDev) {
-                        Shell.SU.run("busybox dd if=" + recoveryImageFile.getAbsolutePath() + " of=/dev/mtd/" + miscMtdDev);
+						SystemUtils.runAsRoot("busybox dd if=" + recoveryImageFile.getAbsolutePath() + " of=/dev/mtd/" + miscMtdDev);
                     }
 
                     remountEverythingRO();
@@ -592,11 +592,11 @@ public class Reboot extends Activity {
                     }
                     break;
                 case Constants.ARCH_ALLWINNER:
-                    Shell.SU.run("echo -n boot-recovery | busybox dd of=/dev/block/nandf count=1 conv=sync");
+					SystemUtils.runAsRoot("echo -n boot-recovery | busybox dd of=/dev/block/nandf count=1 conv=sync");
                     SystemUtils.reboot();
                     break;
                 case Constants.ARCH_ALLWINNER_GB:
-                    Shell.SU.run("echo -n boot-recovery | busybox dd of=/dev/block/nande count=1 conv=sync");
+					SystemUtils.runAsRoot("echo -n boot-recovery | busybox dd of=/dev/block/nande count=1 conv=sync");
                     remountEverythingRO();
                     SystemUtils.reboot();
                     break;
