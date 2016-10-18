@@ -72,15 +72,14 @@ public class SystemUtils {
 	}
 
     public static String commandFromBox(String command) {
-        if (null!=runAsRoot("busybox")) {
-            return "busybox " + command;
-        } else if (null!=runAsRoot("toybox")) {
-            return "toybox " + command;
-        } else if (null!=runAsRoot("toolbox")) {
-            return "toolbox " + command;
-        } else {
-            return command;
+        final String[] cmdsToTest = { "busybox", "toybox", "toolbox" };
+        for (String testedCmd : cmdsToTest) {
+            List<String> result = run(testedCmd + " " + command + " --help");
+            if (null!=result && !result.isEmpty()) {
+                return testedCmd + " " + command;
+            }
         }
+        return command;
     }
 
     public static String getProp(String key) {
@@ -145,6 +144,7 @@ public class SystemUtils {
 	}
 
 	public static void softReboot() {
-        runAsRoot(commandFromBox("pkill") + " zygote");
+        //runAsRoot(commandFromBox("pkill") + " zygote");
+        runAsRoot(commandFromBox("killall") + " zygote");
 	}
 }
