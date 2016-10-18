@@ -1,5 +1,8 @@
 # Reboot Changelog #
 
+* version 2.0.4
+  * Removed root check on start, to solve the problem of rooted devices not detected.
+
 * version 2.0.3
   * Turkish version by agabey_42
 
