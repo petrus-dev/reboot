@@ -2,6 +2,7 @@
 
 * version 2.0.4
   * Removed root check on start, to solve the problem of rooted devices not detected.
+  * Fixed soft reboot for CM13 on OnePlus One (maybe other devices too).
 
 * version 2.0.3
   * Turkish version by agabey_42
