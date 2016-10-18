@@ -36,7 +36,6 @@
 
 package fr.petrus.tools.reboot;
 
-//import eu.chainfire.libsuperuser.Shell;
 import fr.petrus.tools.reboot.utils.Device;
 import fr.petrus.tools.reboot.utils.FileSystemUtils;
 import fr.petrus.tools.reboot.utils.SystemUtils;
@@ -96,9 +95,12 @@ public class Reboot extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		if (!SystemUtils.isDeviceRooted()) {
+        /* Disabled root check at startup. Root permission should be asked later in this method
+           when calling "new Device()"
+           I hope removing this call solves the problem on some devices */
+		/* if (!SystemUtils.isDeviceRooted()) {
 			showDialog(Constants.DIALOG_NO_ROOT_ID);
-		}
+		}*/
 
 		Window window = getWindow();
 
