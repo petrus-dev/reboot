@@ -144,7 +144,7 @@ public class SystemUtils {
 	}
 
 	public static void softReboot() {
-        //runAsRoot(commandFromBox("pkill") + " zygote");
+        runAsRoot(commandFromBox("pkill") + " zygote");
         runAsRoot(commandFromBox("killall") + " zygote");
 	}
 }
