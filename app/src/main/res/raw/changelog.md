@@ -1,5 +1,9 @@
 # Reboot Changelog #
 
+* version 2.0.5
+  * Fix attempt for the soft reboot command which stopped working on some devices.
+  * Support for Android 7.1.1
+
 * version 2.0.4
   * Removed root check on start, to solve the problem of rooted devices not detected.
   * Fixed soft reboot for CM13 on OnePlus One (maybe other devices too).
