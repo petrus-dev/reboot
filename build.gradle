@@ -37,7 +37,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 ext {
-    appVersion = [2, 0, 5]
+    appVersion = [2, 0, 6]
 
     appVersionCode = 1000000 * appVersion[0] + 1000 * appVersion[1] + appVersion[2]
     appVersionName = "${appVersion[0]}.${appVersion[1]}.${appVersion[2]}"
