@@ -1,5 +1,10 @@
 # Reboot Changelog #
 
+* version 2.1.0
+  * Soft reboot should now work on many devices where it was previously broken.
+  * Fixed app crash on some devices.
+  * New option to disable the crash fix and revert to the old way (execute root commands in main thread).
+
 * version 2.0.6
   * Updated Russian translation by "Reboot_Master"
   * Italian translation by "devilz-wolit"
