@@ -74,9 +74,17 @@ public class SystemUtils {
     public static String commandFromBox(String command) {
         final String[] cmdsToTest = { "busybox", "toybox", "toolbox" };
         for (String testedCmd : cmdsToTest) {
-            List<String> result = run(testedCmd + " " + command + " --help");
-            if (null!=result && !result.isEmpty()) {
-                return testedCmd + " " + command;
+			String fullTestCommand = testedCmd + " " + command + " --help &>/dev/null;echo $?";
+            List<String> result = run(fullTestCommand);
+            if (null!=result && !result.isEmpty() && null!=result.get(0)) {
+				try {
+					int returnCode = Integer.parseInt(result.get(0));
+					if (returnCode<127) {
+						return testedCmd + " " + command;
+					}
+				} catch (NumberFormatException e) {
+					Log.e(TAG, "Error when parsing return code ("+result.get(0)+") of command \""+fullTestCommand+"\"", e);
+				}
             }
         }
         return command;
@@ -85,7 +93,7 @@ public class SystemUtils {
     public static String getProp(String key) {
         StringBuilder stringBuilder = new StringBuilder();
 
-        List<String> resultLines = runAsRoot("getprop " + key);
+        List<String> resultLines = run("getprop " + key);
 		if (null!=resultLines) {
 			for (String line : resultLines) {
 				stringBuilder.append(line);
