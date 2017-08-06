@@ -48,12 +48,14 @@ import java.util.List;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -76,6 +78,8 @@ public class Reboot extends Activity {
     private static final String TAG = "Reboot";
 
     private static final boolean TITLE_IN_LAYOUT = true;
+
+    private static boolean performingRebootOrPowerOff = false;
 
     private Device device = null;
 
@@ -316,6 +320,10 @@ public class Reboot extends Activity {
         return sharedPref.getBoolean("confirm_actions", true);
     }
 
+    private boolean executeInMainThread() {
+        return sharedPref.getBoolean("execute_in_main_thread", true);
+    }
+
 	protected Dialog onCreateDialog(int id) {
 		Dialog dialog;
 		AlertDialog.Builder builder;
@@ -475,6 +483,19 @@ public class Reboot extends Activity {
     }
 
     private void removeOldApplication() {
+        if (executeInMainThread()) {
+            execRemoveOldApplication();
+        } else {
+            new AsyncTask<Void, Void, Void>() {
+                protected Void doInBackground(Void... voids) {
+                    execRemoveOldApplication();
+                    return null;
+                }
+            }.execute();
+        }
+    }
+
+    private void execRemoveOldApplication() {
         PackageManager packageManager = getPackageManager();
         try {
             ApplicationInfo applicationInfo =
@@ -500,7 +521,7 @@ public class Reboot extends Activity {
                 commands.add("rm /system/priv-app/"+Constants.OLD_APPLICATION_PACKAGE_NAME+".apk");
                 commands.add("rm /system/priv-app/"+Constants.OLD_APPLICATION_PACKAGE_NAME+"-*.apk");
                 commands.add("mount -o remount,ro /system");
-				SystemUtils.runAsRoot(commands);
+                SystemUtils.runAsRoot(commands);
                 softReboot();
             }
         } catch (PackageManager.NameNotFoundException e) {
@@ -535,18 +556,204 @@ public class Reboot extends Activity {
 		}
 	}
 
-	private void reboot() {
-		stopWifi();
-		remountEverythingRO();
-		SystemUtils.reboot();
+	private synchronized void reboot() {
+        if (executeInMainThread()) {
+            execReboot();
+        } else if (!performingRebootOrPowerOff) {
+            performingRebootOrPowerOff = true;
+            new AsyncTask<Void, Void, Void>() {
+                private ProgressDialog progressDialog = null;
+
+                protected void onPreExecute() {
+                    progressDialog = ProgressDialog.show(Reboot.this,
+                            getText(R.string.reboot),
+                            getText(R.string.message_please_wait),
+                            true);
+                }
+
+                protected Void doInBackground(Void... voids) {
+                    execReboot();
+                    return null;
+                }
+
+                protected void onPostExecute(Void v) {
+                    if (null!=progressDialog) {
+                        progressDialog.cancel();
+                        progressDialog = null;
+                    }
+                    performingRebootOrPowerOff = false;
+                }
+            }.execute();
+        }
 	}
 
-	private void softReboot() {
-		SystemUtils.softReboot();
+	private synchronized void softReboot() {
+        if (executeInMainThread()) {
+            execSoftReboot();
+        } else if (!performingRebootOrPowerOff) {
+            performingRebootOrPowerOff = true;
+            new AsyncTask<Void, Void, Void>() {
+                private ProgressDialog progressDialog = null;
+
+                protected void onPreExecute() {
+                    progressDialog = ProgressDialog.show(Reboot.this,
+                            getText(R.string.soft_reboot),
+                            getText(R.string.message_please_wait),
+                            true);
+                }
+
+                protected Void doInBackground(Void... voids) {
+                    execSoftReboot();
+                    return null;
+                }
+
+                protected void onPostExecute(Void v) {
+                    if (null!=progressDialog) {
+                        progressDialog.cancel();
+                        progressDialog = null;
+                    }
+                    performingRebootOrPowerOff = false;
+                }
+            }.execute();
+        }
 	}
 
-	private void rebootRecovery() {
-		stopWifi();
+	private synchronized void rebootRecovery() {
+        if (executeInMainThread()) {
+            execRebootRecovery();
+        } else if (!performingRebootOrPowerOff) {
+            performingRebootOrPowerOff = true;
+            new AsyncTask<Void, Void, Void>() {
+                private ProgressDialog progressDialog = null;
+
+                protected void onPreExecute() {
+                    progressDialog = ProgressDialog.show(Reboot.this,
+                            getText(R.string.reboot_recovery),
+                            getText(R.string.message_please_wait),
+                            true);
+                }
+
+                protected Void doInBackground(Void... voids) {
+                    execRebootRecovery();
+                    return null;
+                }
+
+                protected void onPostExecute(Void v) {
+                    if (null!=progressDialog) {
+                        progressDialog.cancel();
+                        progressDialog = null;
+                    }
+                    performingRebootOrPowerOff = false;
+                }
+            }.execute();
+        }
+	}
+
+	private synchronized void rebootBootloader() {
+        if (executeInMainThread()) {
+            execRebootBootloader();
+        } else if (!performingRebootOrPowerOff) {
+            performingRebootOrPowerOff = true;
+            new AsyncTask<Void, Void, Void>() {
+                private ProgressDialog progressDialog = null;
+
+                protected void onPreExecute() {
+                    progressDialog = ProgressDialog.show(Reboot.this,
+                            getText(R.string.reboot_bootloader),
+                            getText(R.string.message_please_wait),
+                            true);
+                }
+
+                protected Void doInBackground(Void... voids) {
+                    execRebootBootloader();
+                    return null;
+                }
+
+                protected void onPostExecute(Void v) {
+                    if (null!=progressDialog) {
+                        progressDialog.cancel();
+                        progressDialog = null;
+                    }
+                    performingRebootOrPowerOff = false;
+                }
+            }.execute();
+        }
+	}
+
+	private synchronized void rebootDownload() {
+        if (executeInMainThread()) {
+            execRebootDownload();
+        } else if (!performingRebootOrPowerOff) {
+            performingRebootOrPowerOff = true;
+            new AsyncTask<Void, Void, Void>() {
+                private ProgressDialog progressDialog = null;
+
+                protected void onPreExecute() {
+                    progressDialog = ProgressDialog.show(Reboot.this,
+                            getText(R.string.reboot_download),
+                            getText(R.string.message_please_wait),
+                            true);
+                }
+
+                protected Void doInBackground(Void... voids) {
+                    execRebootDownload();
+                    return null;
+                }
+
+                protected void onPostExecute(Void v) {
+                    if (null!=progressDialog) {
+                        progressDialog.cancel();
+                        progressDialog = null;
+                    }
+                    performingRebootOrPowerOff = false;
+                }
+            }.execute();
+        }
+	}
+
+	private synchronized void powerOff() {
+        if (executeInMainThread()) {
+            execPowerOff();
+        } else if (!performingRebootOrPowerOff) {
+            performingRebootOrPowerOff = true;
+            new AsyncTask<Void, Void, Void>() {
+                private ProgressDialog progressDialog = null;
+
+                protected void onPreExecute() {
+                    progressDialog = ProgressDialog.show(Reboot.this,
+                            getText(R.string.power_off),
+                            getText(R.string.message_please_wait),
+                            true);
+                }
+
+                protected Void doInBackground(Void... voids) {
+                    execPowerOff();
+                    return null;
+                }
+
+                protected void onPostExecute(Void v) {
+                    if (null!=progressDialog) {
+                        progressDialog.cancel();
+                        progressDialog = null;
+                    }
+                    performingRebootOrPowerOff = false;
+                }
+            }.execute();
+        }
+	}
+
+    private void execReboot() {
+        stopWifi();
+        remountEverythingRO();
+        SystemUtils.reboot();
+    }
+
+    private void execSoftReboot() {
+        SystemUtils.softReboot();
+    }
+
+    private void execRebootRecovery() {
+        stopWifi();
 
         boolean flash_misc;
 
@@ -574,7 +781,7 @@ public class Reboot extends Activity {
         }
 
         if (flash_misc) {
-			switch (device.getArch()) {
+            switch (device.getArch()) {
                 case Constants.ARCH_ROCKCHIP_28:
                 case Constants.ARCH_ROCKCHIP_29:
                 case Constants.ARCH_ROCKCHIP_30:
@@ -583,7 +790,7 @@ public class Reboot extends Activity {
                     String miscMtdDev = SystemUtils.getImageMtdDev("misc");
 
                     if (null != recoveryImageFile && null != miscMtdDev) {
-						SystemUtils.runAsRoot(SystemUtils.commandFromBox("dd")
+                        SystemUtils.runAsRoot(SystemUtils.commandFromBox("dd")
                                 + " if=" + recoveryImageFile.getAbsolutePath()
                                 + " of=/dev/mtd/" + miscMtdDev);
                     }
@@ -596,13 +803,13 @@ public class Reboot extends Activity {
                     }
                     break;
                 case Constants.ARCH_ALLWINNER:
-					SystemUtils.runAsRoot("echo -n boot-recovery | "
+                    SystemUtils.runAsRoot("echo -n boot-recovery | "
                             + SystemUtils.commandFromBox("dd")
                             + " of=/dev/block/nandf count=1 conv=sync");
                     SystemUtils.reboot();
                     break;
                 case Constants.ARCH_ALLWINNER_GB:
-					SystemUtils.runAsRoot("echo -n boot-recovery | "
+                    SystemUtils.runAsRoot("echo -n boot-recovery | "
                             + SystemUtils.commandFromBox("dd")
                             + " of=/dev/block/nande count=1 conv=sync");
                     remountEverythingRO();
@@ -616,38 +823,38 @@ public class Reboot extends Activity {
                         Log.e(TAG, "Error while rebooting to recovery", e);
                     }
                 }
-			}
-		} else {
-			remountEverythingRO();
-			try {
-				SystemUtils.reboot("recovery");
-			} catch (IOException e) {
-				Log.e(TAG, "Error while rebooting to recovery", e);
-			}
-		}
-	}
+            }
+        } else {
+            remountEverythingRO();
+            try {
+                SystemUtils.reboot("recovery");
+            } catch (IOException e) {
+                Log.e(TAG, "Error while rebooting to recovery", e);
+            }
+        }
+    }
 
-	private void rebootBootloader() {
-		stopWifi();
-		remountEverythingRO();
-		SystemUtils.rebootBootloader();
-	}
+    private void execRebootBootloader() {
+        stopWifi();
+        remountEverythingRO();
+        SystemUtils.rebootBootloader();
+    }
 
-	private void rebootDownload() {
-		stopWifi();
-		remountEverythingRO();
-		try {
-			SystemUtils.reboot("download");
-		} catch (IOException e) {
-			Log.e(TAG, "Error while rebooting in download mode", e);
-		}
-	}
+    private void execRebootDownload() {
+        stopWifi();
+        remountEverythingRO();
+        try {
+            SystemUtils.reboot("download");
+        } catch (IOException e) {
+            Log.e(TAG, "Error while rebooting in download mode", e);
+        }
+    }
 
-	private void powerOff() {
-		stopWifi();
-		remountEverythingRO();
-		SystemUtils.powerOff();
-	}
+    private void execPowerOff() {
+        stopWifi();
+        remountEverythingRO();
+        SystemUtils.powerOff();
+    }
 
 	private File extractRecoveryImage() {
 		File recoveryImageFile = new File(getApplicationContext().getFilesDir(),
