@@ -41,6 +41,8 @@
     <string name="pref_summary_flash_misc">"Birçok rockchip ve allwinner cihazlarda, bazı metin kurtarma için yeniden \"diğer\" bölümü için yazılmış olmalı. Eğer kurtarma için yeniden değilseniz \"Evet\" deniyorlar."</string>
     <string name="pref_summary_remount_everything_ro">Dosya sisteminin bozulmasını önlemek için bu seçeneği etkinleştirebilirsiniz. Ancak isterseniz dondurabilirsiniz..</string>
     <string name="pref_summary_stop_wifi">UYARI : Bu işlem bootloop.a neden olabilir. Bu riski bilerek kullanın!</string>
+    <string name="pref_execute_in_main_thread">Execute root commands in main thread</string>
+    <string name="pref_summary_execute_in_main_thread">Disabled by default for better responsiveness. Try to check this option if you have problems.</string>
     <string name="reboot">Yeniden başlat</string>
     <string name="reboot_bootloader">Bootloader modda başlat</string>
     <string name="reboot_download">Download modda başlat</string>

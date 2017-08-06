@@ -43,6 +43,8 @@
     <string name="pref_summary_remount_everything_ro">Włączenie tej opcji może spowodować uszkodzenie systemu plików lub zablokować system.</string>
     <string name="pref_check_old_app">Sprawdzanie starszej zainstalowanej wersji i propozycja usunięcia</string>
     <string name="pref_summary_check_old_app">Jeśli nie usuniesz starszej wersji aplikacji Restart (przed 1.4.0), będą pracowały obie na urządzeniu, przy nowej wersji można usunąć starą.</string>
+    <string name="pref_execute_in_main_thread">Execute root commands in main thread</string>
+    <string name="pref_summary_execute_in_main_thread">Disabled by default for better responsiveness. Try to check this option if you have problems.</string>
     <string name="yes">Tak</string>
     <string name="no">Nie</string>
     <string name="exit">Wyjście</string>

@@ -43,6 +43,8 @@
 	<string name="pref_summary_remount_everything_ro">Activer cette option aide à préserver l\'intégrité du système de fichier, mais peut dans certains cas figer le système.</string>
     <string name="pref_check_old_app">Vérifier la présence d\'une ancienne version de l\'application, et proposer de la désinstaller</string>
     <string name="pref_summary_check_old_app">Si vous ne désinstallez pas l\'ancienne version (antérieure à 1.4.0), les deux seront présentes. Cette nouvelle version peut suppimer l\'ancienne, pour être sûr d\'utiliser la nouvelle.</string>
+	<string name="pref_execute_in_main_thread">Executer les commandes root dans le thread principal</string>
+	<string name="pref_summary_execute_in_main_thread">Désactivé par défaut pour améliorer la réactivité de l\'application. Essayez d\'activer cette option si vous rencontrez des problèmes.</string>
 	<string name="yes">Oui</string>
 	<string name="no">Non</string>
 	<string name="exit">Quitter</string>

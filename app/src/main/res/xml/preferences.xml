@@ -71,4 +71,9 @@
         android:title="@string/pref_confirm_actions"
         android:summary="@string/pref_summary_confirm_actions"
         android:defaultValue="true" />
+	<CheckBoxPreference
+		android:key="execute_in_main_thread"
+		android:title="@string/pref_execute_in_main_thread"
+		android:summary="@string/pref_summary_execute_in_main_thread"
+		android:defaultValue="false" />
 </PreferenceScreen>

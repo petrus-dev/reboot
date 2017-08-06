@@ -43,6 +43,8 @@
     <string name="pref_summary_remount_everything_ro">Ativar esta opção pode evitar a corrupção de dados do sistema, mas também pode causar paragens do mesmo</string>
     <string name="pref_check_old_app">Verificar existência de uma versão anterior da aplicação e propôr a sua remoção</string>
     <string name="pref_summary_check_old_app">Se não remover a versão anterior desta aplicação (anterior à versão 1.4.0), ambas ficarão instaladas, por isso esta versão pode proceder à remoção da mais antiga.</string>
+    <string name="pref_execute_in_main_thread">Execute root commands in main thread</string>
+    <string name="pref_summary_execute_in_main_thread">Disabled by default for better responsiveness. Try to check this option if you have problems.</string>
     <string name="yes">Sim</string>
     <string name="no">Não</string>
     <string name="exit">Sair</string>

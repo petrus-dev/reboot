@@ -43,6 +43,8 @@
     <string name="pref_summary_remount_everything_ro">Activar esta opción puede evitar la corrupción de archivos del sistema, pero puede congelar el sistema</string>
     <string name="pref_check_old_app">Check for an old version of the application, and offer to remove it</string>
     <string name="pref_summary_check_old_app">If you don\'t remove the old version of the reboot application (before 1.4.0), you will have both on your device, so this new version can remove the old one.</string>
+    <string name="pref_execute_in_main_thread">Execute root commands in main thread</string>
+    <string name="pref_summary_execute_in_main_thread">Disabled by default for better responsiveness. Try to check this option if you have problems.</string>
     <string name="yes">Si</string>
     <string name="no">No</string>
     <string name="exit">Salir</string>
